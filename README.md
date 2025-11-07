@@ -39,14 +39,21 @@ This project aims to analyze these trends using global nutrition and health data
 
 **Kaggle Dataset**
 - **Platform**: Kaggle
-- **Method**: Data is fetched directly from Kaggle using the Kaggle API
+- **Method**: Data is fetched directly from Kaggle using `kagglehub`
+- **Dataset Name**: `vivekvv12/foodsecurity-data` (update in scripts if different)
 - **Contains**: 
-  - Nutrition and dietary consumption data (originally from FAO)
-  - Obesity statistics and health outcomes (originally from USDA)
-  - Food balance sheets (food supply, consumption, and utilization)
-  - Nutritional indicators (protein, fat, calories, sugar, fiber, etc.) by country and year
-  - Population data for per capita calculations
-  - Health outcomes (obesity rates, diabetes prevalence)
+  - **FoodBalanceSheet Data**: Food balance sheets with nutritional indicators
+    - Fat supply (g/capita/day)
+    - Protein supply (g/capita/day)
+    - Food supply (kcal/capita/day)
+    - Food supply quantity (kg/capita/yr)
+    - 238+ food items and categories
+  - **Population Data**: Demographic data by country and year
+    - Total population (both sexes, male, female)
+    - Urban and rural population
+  - **FoodSecurity Data**: Food security indicators
+    - Dietary energy supply adequacy
+    - Food security metrics
 
 > **Note**: The datasets hosted on Kaggle are derived from:
 > - **FAO (Food and Agriculture Organization)**: https://www.fao.org/faostat/en/#home
@@ -106,8 +113,10 @@ This project aims to analyze these trends using global nutrition and health data
 ### Data Processing Pipeline
 
 1. **Data Collection**
-   - Fetch datasets from Kaggle using the Kaggle API
+   - Fetch datasets from Kaggle using `kagglehub`
+   - Load FoodBalanceSheet, FoodSecurity, and Population datasets
    - Extract relevant variables (nutrient consumption, population, health outcomes)
+   - Transform Population data from wide to long format
    - Load data into pandas DataFrames for analysis
 
 2. **Data Cleaning**
@@ -124,9 +133,11 @@ This project aims to analyze these trends using global nutrition and health data
      - Macronutrient balance (protein:fat:carbohydrate ratio)
 
 4. **Data Integration**
-   - Merge nutrition data with population data
-   - Integrate health outcomes (obesity, diabetes rates)
-   - Combine economic indicators (GDP per capita) if available
+   - Merge FoodBalanceSheet data with Population data on Area and Year
+   - Integrate FoodSecurity data (optional)
+   - Standardize country names and year formats
+   - Calculate per capita consumption rates
+   - Create unified dataset: `data/processed/integrated_nutrition_data.csv`
 
 ### Analysis Approach
 
@@ -219,13 +230,22 @@ The project uses the following Python libraries:
 - `plotly` - Interactive visualizations
 - `jupyter` - Interactive notebooks
 - `scikit-learn` - Machine learning models
-- `kaggle` - Kaggle API client for downloading datasets
+- `kagglehub[pandas-datasets]` - Kaggle dataset loading (recommended)
+- `kaggle` - Kaggle API client (alternative for downloading datasets)
 - `requests` - API/data downloading (if needed)
 - `openpyxl` - Excel file handling (for data processing)
 
-### Kaggle API Setup
+### Kaggle Setup
 
-To download datasets from Kaggle, you need to:
+The project uses `kagglehub` to load datasets directly from Kaggle. Two options:
+
+**Option 1: Using kagglehub (Recommended)**
+- `kagglehub` handles authentication automatically
+- No manual configuration needed for most cases
+- Install with: `pip install kagglehub[pandas-datasets]`
+
+**Option 2: Using kaggle API (Alternative)**
+If you prefer using the kaggle API directly:
 
 1. **Create a Kaggle account** (if you don't have one)
    - Visit: https://www.kaggle.com/
@@ -249,45 +269,104 @@ To download datasets from Kaggle, you need to:
    kaggle datasets list
    ```
 
+## Quick Start
+
+### Step 1: Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### Step 2: Configure Dataset (Optional)
+If your Kaggle dataset is different from `vivekvv12/foodsecurity-data`, update it in `scripts/integrate_datasets.py`.
+
+### Step 3: Run Integration
+```bash
+python scripts/integrate_datasets.py
+```
+
+This will:
+- Load all datasets from Kaggle
+- Integrate them into a unified dataset
+- Save to `data/processed/integrated_nutrition_data.csv`
+
+### Step 4: Run Analysis
+```bash
+# Interactive visualization
+python scripts/interactive_plot.py
+
+# Full analysis
+python scripts/analysis.py
+
+# Generate report
+python scripts/generate_report.py
+```
+
 ## Usage
 
-### Data Preparation
+### Phase 1: Data Integration
 
-1. **Setup Kaggle API** (if not already done)
-   - Ensure `kaggle.json` is in `~/.kaggle/` directory
-   - Verify API credentials are working
+**Step 1: Configure Kaggle Dataset Names**
 
-2. **Download datasets from Kaggle**
-   ```bash
-   python scripts/download_data.py
-   ```
-   This script uses the Kaggle API to download the nutrition and obesity datasets.
+Update the dataset name in `scripts/integrate_datasets.py` if needed:
+```python
+# In the main() function, update these variables:
+FOOD_BALANCE_DATASET = "vivekvv12/foodsecurity-data"  # Your dataset name
+FOOD_SECURITY_DATASET = "vivekvv12/foodsecurity-data"  # Your dataset name
+POPULATION_DATASET = "vivekvv12/foodsecurity-data"  # Your dataset name
+```
 
-3. **Process and clean data**
-   ```bash
-   python scripts/process_data.py
-   ```
+**Step 2: Integrate Datasets**
 
-### Running Analysis
+Run the integration script to load and merge all datasets:
+```bash
+python scripts/integrate_datasets.py
+```
 
-1. **Exploratory Data Analysis**
-   ```bash
-   jupyter notebook notebooks/01_exploratory_analysis.ipynb
-   ```
+This script will:
+- Load FoodBalanceSheet, FoodSecurity, and Population data from Kaggle
+- Transform Population data from wide to long format
+- Extract nutritional elements (fat, protein, calories, sugar)
+- Merge datasets on Area and Year
+- Calculate per capita consumption
+- Save integrated dataset to `data/processed/integrated_nutrition_data.csv`
 
-2. **Interactive Visualization**
-   ```bash
-   python scripts/interactive_plot.py
-   ```
-   Or use the Jupyter notebook:
-   ```bash
-   jupyter notebook notebooks/02_interactive_visualization.ipynb
-   ```
+**Note**: If you want to cache data locally first (optional, for faster subsequent runs):
+```bash
+python scripts/load_data_from_kaggle.py
+```
 
-3. **Predictive Analysis**
-   ```bash
-   jupyter notebook notebooks/03_predictive_analysis.ipynb
-   ```
+This will download all datasets from Kaggle and save them to `data/raw/` for local caching.
+
+### Phase 2: Data Analysis
+
+**Step 1: Analyze Datasets (Optional)**
+```bash
+python scripts/analyze_datasets.py
+```
+This provides an assessment of data availability for each research question.
+
+**Step 2: Exploratory Data Analysis**
+```bash
+jupyter notebook notebooks/01_exploratory_analysis.ipynb
+```
+
+**Step 3: Interactive Visualization**
+```bash
+python scripts/interactive_plot.py
+```
+Or use the Jupyter notebook:
+```bash
+jupyter notebook notebooks/02_interactive_visualization.ipynb
+```
+
+**Step 4: Predictive Analysis**
+```bash
+python scripts/analysis.py
+```
+Or use the Jupyter notebook:
+```bash
+jupyter notebook notebooks/03_predictive_analysis.ipynb
+```
 
 ### Generating Reports
 
@@ -316,11 +395,12 @@ Bell labs/
 │   └── 04_report_generation.ipynb
 │
 ├── scripts/                    # Python scripts
-│   ├── download_data.py        # Kaggle data download script
-│   ├── process_data.py         # Data processing pipeline
-│   ├── interactive_plot.py     # Interactive visualization
-│   ├── analysis.py             # Core analysis functions
-│   └── generate_report.py      # Report generation
+│   ├── load_data_from_kaggle.py  # Load datasets from Kaggle (optional caching)
+│   ├── integrate_datasets.py     # Main data integration pipeline
+│   ├── analyze_datasets.py       # Dataset analysis and assessment
+│   ├── interactive_plot.py       # Interactive visualization
+│   ├── analysis.py               # Predictive and descriptive analysis
+│   └── generate_report.py        # Report generation
 │
 ├── src/                        # Source code modules
 │   ├── __init__.py
@@ -336,7 +416,8 @@ Bell labs/
 │
 └── docs/                       # Documentation
     ├── methodology.md          # Detailed methodology
-    └── data_dictionary.md      # Data variable descriptions
+    ├── data_dictionary.md      # Data variable descriptions
+    └── dataset_analysis.md     # Dataset analysis and assessment
 ```
 
 ## Key Findings
@@ -362,10 +443,20 @@ The interactive bar plot allows users to:
 ### Example Usage
 
 ```python
-from scripts.interactive_plot import create_interactive_plot
+from scripts.interactive_plot import create_interactive_visualization
+from src.data_loader import load_processed_data
+
+# Load processed data
+df = load_processed_data("data/processed/integrated_nutrition_data.csv")
 
 # Create and display interactive plot
-fig = create_interactive_plot()
+fig = create_interactive_visualization(
+    df,
+    country_col="Country",
+    nutrient_col="Nutrient_Type",
+    year_col="Year",
+    value_col="Consumption_Value"
+)
 fig.show()
 ```
 
@@ -419,6 +510,48 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - **USDA Economic Research Service** for obesity and food consumption statistics
 - **Open Source Community** for the tools and libraries that made this project possible
 
+## Project Status
+
+**Current Phase**: Phase 1 - Dataset Integration ✅ Complete
+
+**Completed**:
+- ✅ Project structure and setup
+- ✅ Data loading from Kaggle implementation
+- ✅ Dataset integration pipeline
+- ✅ Analysis scripts framework
+
+**In Progress**:
+- ⏳ Data integration and analysis
+- ⏳ Interactive visualizations
+- ⏳ Predictive modeling
+
+**Next Steps**:
+1. Run `scripts/integrate_datasets.py` to create unified dataset
+2. Perform exploratory data analysis
+3. Create interactive visualizations
+4. Answer research questions
+5. Generate comprehensive report
+
+## Research Questions Feasibility
+
+Based on available datasets, here's what can be answered:
+
+**✅ Can be FULLY answered**:
+- Question 3: Dietary homogenization analysis
+- Question 6: Interactive bar plot with per capita consumption
+
+**⚠️ Can be PARTIALLY answered**:
+- Question 1: Sugar/Fat/Protein/Fiber consumption (Fat, Protein, Sugar available; Fiber needs verification)
+- Question 4: Food groups consumption changes (Cereals, Dairy, Fruits, Vegetables available)
+- Question 5: Nutritional diversity analysis (can calculate; income correlation needs economic data)
+- Question 7: Descriptive analysis (can perform; predictive modeling limited without health outcomes)
+
+**❌ Cannot be answered without additional data**:
+- Question 2: Obesity/diabetes correlation (needs health outcomes data from WHO or similar sources)
+
+**Missing Data Needed**:
+- Health outcomes: Obesity rates, diabetes prevalence (for Question 2)
+- Economic data: GDP per capita, income levels (for Question 5 income correlation)
 
 ---
 
