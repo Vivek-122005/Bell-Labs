@@ -1,0 +1,44 @@
+======================================================================
+GLOBAL OBESITY TREND FORECAST (2010-2030)
+======================================================================
+
+Weighting method: population-weighted
+Observations: 13 years (2010-2022)
+
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                      y   R-squared:                       0.998
+Model:                            OLS   Adj. R-squared:                  0.998
+Method:                 Least Squares   F-statistic:                     5166.
+Date:                Wed, 03 Dec 2025   Prob (F-statistic):           4.70e-16
+Time:                        17:45:03   Log-Likelihood:                 15.219
+No. Observations:                  13   AIC:                            -26.44
+Df Residuals:                      11   BIC:                            -25.31
+Df Model:                           1                                         
+Covariance Type:            nonrobust                                         
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const       -860.9222     12.192    -70.613      0.000    -887.757    -834.087
+x1             0.4347      0.006     71.873      0.000       0.421       0.448
+==============================================================================
+Omnibus:                        1.778   Durbin-Watson:                   0.305
+Prob(Omnibus):                  0.411   Jarque-Bera (JB):                1.015
+Skew:                           0.336   Prob(JB):                        0.602
+Kurtosis:                       1.808   Cond. No.                     1.09e+06
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[2] The condition number is large, 1.09e+06. This might indicate that there are
+strong multicollinearity or other numerical problems.
+
+======================================================================
+LIMITATIONS
+======================================================================
+
+1. This is a simple linear extrapolation assuming current trends persist.
+2. Does not account for policy changes, economic shocks, or other structural breaks.
+3. Ecological analysis - correlations do not imply causation.
+4. Global average masks significant regional and country-level heterogeneity.
+5. Prediction intervals reflect statistical uncertainty, not model uncertainty.

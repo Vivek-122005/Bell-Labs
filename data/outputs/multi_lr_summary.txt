@@ -1,0 +1,39 @@
+======================================================================
+MULTIPLE LINEAR REGRESSION: Obesity ~ Diet Composition
+======================================================================
+
+Predictors: fat_share, energy_kcal_day, sugar_share, oil_fats_share, meat_share
+Training observations: 1,704
+Test observations: 427
+
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                      y   R-squared:                       0.402
+Model:                            OLS   Adj. R-squared:                  0.400
+Method:                 Least Squares   F-statistic:                     228.4
+Date:                Wed, 03 Dec 2025   Prob (F-statistic):          1.13e-186
+Time:                        17:45:03   Log-Likelihood:                -6142.4
+No. Observations:                1704   AIC:                         1.230e+04
+Df Residuals:                    1698   BIC:                         1.233e+04
+Df Model:                           5                                         
+Covariance Type:            nonrobust                                         
+===================================================================================
+                      coef    std err          t      P>|t|      [0.025      0.975]
+-----------------------------------------------------------------------------------
+const              -0.5716      1.140     -0.501      0.616      -2.808       1.665
+fat_share           0.2833      0.109      2.609      0.009       0.070       0.496
+energy_kcal_day     0.0029      0.001      4.463      0.000       0.002       0.004
+sugar_share         0.6631      0.054     12.215      0.000       0.557       0.770
+oil_fats_share      0.0821      0.061      1.351      0.177      -0.037       0.201
+meat_share          0.1502      0.035      4.267      0.000       0.081       0.219
+==============================================================================
+Omnibus:                      236.289   Durbin-Watson:                   1.962
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):              492.639
+Skew:                           0.827   Prob(JB):                    1.06e-107
+Kurtosis:                       5.051   Cond. No.                     2.39e+03
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[2] The condition number is large, 2.39e+03. This might indicate that there are
+strong multicollinearity or other numerical problems.

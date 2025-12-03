@@ -1,0 +1,33 @@
+======================================================================
+SIMPLE LINEAR REGRESSION: Obesity ~ FatShare
+======================================================================
+
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                      y   R-squared:                       0.306
+Model:                            OLS   Adj. R-squared:                  0.305
+Method:                 Least Squares   F-statistic:                     936.6
+Date:                Wed, 03 Dec 2025   Prob (F-statistic):          8.69e-171
+Time:                        17:45:02   Log-Likelihood:                -7828.1
+No. Observations:                2131   AIC:                         1.566e+04
+Df Residuals:                    2129   BIC:                         1.567e+04
+Df Model:                           1                                         
+Covariance Type:            nonrobust                                         
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const         -1.0612      0.747     -1.421      0.155      -2.526       0.403
+x1             0.8014      0.026     30.604      0.000       0.750       0.853
+==============================================================================
+Omnibus:                      242.691   Durbin-Watson:                   0.227
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):              387.242
+Skew:                           0.799   Prob(JB):                     8.16e-85
+Kurtosis:                       4.345   Cond. No.                         103.
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+
+
+💡 Interpretation:
+Each 1 percentage-point increase in fat_share is associated with an estimated 0.801 percentage-point increase in obesity prevalence.
