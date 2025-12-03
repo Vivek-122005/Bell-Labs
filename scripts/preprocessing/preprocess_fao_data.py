@@ -55,13 +55,30 @@ if 'Unit' in population_df.columns:
     # Convert from thousands to actual population
     # Most FAO population data is in "1000 No" format
     unit_mask = population_df['Unit'].str.contains('1000', case=False, na=False)
+    
+    # Initialize population column with NaN
+    population_df['population'] = pd.NA
+    
+    # Handle rows with '1000' units (convert from thousands)
     if unit_mask.any():
         population_df.loc[unit_mask, 'population'] = population_df.loc[unit_mask, 'Value'] * 1000
         print(f"   Converted {unit_mask.sum():,} rows from thousands to actual population")
-    else:
-        # If not in thousands, assume already in actual numbers
-        population_df['population'] = population_df['Value']
-        print("   Population already in actual numbers")
+    
+    # Handle rows with non-'1000' units (assume already in actual numbers)
+    non_thousand_mask = ~unit_mask
+    if non_thousand_mask.any():
+        population_df.loc[non_thousand_mask, 'population'] = population_df.loc[non_thousand_mask, 'Value']
+        print(f"   Used {non_thousand_mask.sum():,} rows as actual numbers (non-thousands units)")
+    
+    # Handle rows with missing units (assume actual numbers)
+    missing_unit_mask = population_df['Unit'].isna()
+    if missing_unit_mask.any():
+        population_df.loc[missing_unit_mask, 'population'] = population_df.loc[missing_unit_mask, 'Value']
+        print(f"   Used {missing_unit_mask.sum():,} rows with missing units as actual numbers")
+else:
+    # No Unit column - assume all values are already in actual numbers
+    population_df['population'] = population_df['Value']
+    print("   No Unit column found - assuming population already in actual numbers")
 
 # Load AreaCodes for country name standardization
 print("   Loading AreaCodes for country standardization...")
@@ -83,15 +100,20 @@ else:
     population_df['country'] = population_df['Area']
 
 # Create cleaned population table
+# Ensure population is numeric before converting to int
+# Drop rows with missing population values before converting to int
 cleaned_population = pd.DataFrame({
     'country': population_df['country'],
     'year': pd.to_numeric(population_df['Year'], errors='coerce'),
-    'population': population_df['population'].astype(int)
+    'population': pd.to_numeric(population_df['population'], errors='coerce')
 })
 
-# Remove rows with missing data
+# Remove rows with missing data (including NaN population values)
 cleaned_population = cleaned_population.dropna(subset=['country', 'year', 'population'])
 cleaned_population = cleaned_population.drop_duplicates(subset=['country', 'year'], keep='first')
+
+# Convert population to int only after removing NaN values
+cleaned_population['population'] = cleaned_population['population'].astype(int)
 
 print(f"   Final population dataset: {len(cleaned_population):,} rows")
 print(f"   Countries: {cleaned_population['country'].nunique()}")
